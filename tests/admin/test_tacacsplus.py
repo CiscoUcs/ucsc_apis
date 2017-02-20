@@ -47,8 +47,8 @@ def test_003_tacacsplus_provider_group_create():
     assert_equal(found, True)
 
 
-def test_004_tacacsplus_provider_group_add_provider():
-    tacacsplus_provider_group_add_provider(
+def test_004_tacacsplus_provider_group_provider_add():
+    tacacsplus_provider_group_provider_add(
         handle, group_name="test_prov_grp", name="test_tacac_prov")
     found = tacacsplus_provider_group_provider_exists(
             handle,
@@ -56,15 +56,15 @@ def test_004_tacacsplus_provider_group_add_provider():
     assert_equal(found, True)
 
 
-def test_005_tacacsplus_provider_group_modify_provider():
-    mo = tacacsplus_provider_group_modify_provider(
+def test_005_tacacsplus_provider_group_provider_modify():
+    mo = tacacsplus_provider_group_provider_modify(
         handle, group_name="test_prov_grp", name="test_tacac_prov",
         order="2")
     assert_equal(mo.order, "2")
 
 
-def test_006_tacacsplus_provider_group_remove_provider():
-    tacacsplus_provider_group_remove_provider(
+def test_006_tacacsplus_provider_group_provider_remove():
+    tacacsplus_provider_group_provider_remove(
         handle, group_name="test_prov_grp", name="test_tacac_prov")
     found = tacacsplus_provider_group_provider_exists(
             handle,

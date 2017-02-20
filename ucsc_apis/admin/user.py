@@ -202,7 +202,7 @@ def user_delete(handle, name):
     handle.commit()
 
 
-def user_add_role(handle, user_name, name, descr=None, **kwargs):
+def user_role_add(handle, user_name, name, descr=None, **kwargs):
     """
     Adds role to an user
 
@@ -221,7 +221,7 @@ def user_add_role(handle, user_name, name, descr=None, **kwargs):
         UcscOperationError: If AaaUser is not present
 
     Example:
-        user_add_role(handle, user_name="test", name="admin")
+        user_role_add(handle, user_name="test", name="admin")
     """
 
     from ucscsdk.mometa.aaa.AaaUserRole import AaaUserRole
@@ -229,7 +229,7 @@ def user_add_role(handle, user_name, name, descr=None, **kwargs):
     dn = ucsc_base_dn + "/user-" + user_name
     obj = handle.query_dn(dn)
     if not obj:
-        raise UcscOperationError("user_add_role",
+        raise UcscOperationError("user_role_add",
                                  "User does not exist.")
 
     mo = AaaUserRole(parent_mo_or_dn=obj, name=name, descr=descr)
@@ -288,7 +288,7 @@ def user_role_exists(handle, user_name, name, **kwargs):
     return (mo_exists, mo if mo_exists else None)
 
 
-def user_remove_role(handle, user_name, name):
+def user_role_remove(handle, user_name, name):
     """
     Remove role from user
 
@@ -304,19 +304,19 @@ def user_remove_role(handle, user_name, name):
         UcscOperationError: If AaaUserRole is not present
 
     Example:
-        user_remove_role(handle, user_name="test", name="admin")
+        user_role_remove(handle, user_name="test", name="admin")
     """
 
     mo = user_role_get(handle, user_name, name)
     if not mo:
-        raise UcscOperationError("user_remove_role",
+        raise UcscOperationError("user_role_remove",
                                  "Role is not associated with user.")
 
     handle.remove_mo(mo)
     handle.commit()
 
 
-def user_add_locale(handle, user_name, name, descr=None, **kwargs):
+def user_locale_add(handle, user_name, name, descr=None, **kwargs):
     """
     Adds locale to user
 
@@ -335,7 +335,7 @@ def user_add_locale(handle, user_name, name, descr=None, **kwargs):
         UcscOperationError: If AaaUser is not present
 
     Example:
-        user_add_locale(handle, user_name="test", name="testlocale")
+        user_locale_add(handle, user_name="test", name="testlocale")
     """
 
     from ucscsdk.mometa.aaa.AaaUserLocale import AaaUserLocale
@@ -343,7 +343,7 @@ def user_add_locale(handle, user_name, name, descr=None, **kwargs):
     dn = ucsc_base_dn + "/user-" + user_name
     obj = handle.query_dn(dn)
     if not obj:
-        raise UcscOperationError("user_add_locale",
+        raise UcscOperationError("user_locale_add",
                                  "User does not exist.")
 
     mo = AaaUserLocale(parent_mo_or_dn=obj, name=name, descr=descr)
@@ -402,7 +402,7 @@ def user_locale_exists(handle, user_name, name, **kwargs):
     return (mo_exists, mo if mo_exists else None)
 
 
-def user_remove_locale(handle, user_name, name):
+def user_locale_remove(handle, user_name, name):
     """
     Remove locale from user
 
@@ -418,12 +418,12 @@ def user_remove_locale(handle, user_name, name):
         UcscOperationError: If AaaUserLocale is not present
 
     Example:
-
+        user_locale_remove(handle, user_name="test", name="testlocale")
     """
 
     mo = user_locale_get(handle, user_name, name)
     if not mo:
-        raise UcscOperationError("user_remove_locale",
+        raise UcscOperationError("user_locale_remove",
                                  "Locale is not associated with user.")
 
     handle.remove_mo(mo)
@@ -432,7 +432,7 @@ def user_remove_locale(handle, user_name, name):
 
 def password_strength_check(handle, descr=None, **kwargs):
     """
-    check pasword strength for locally authenticated user
+    Check password strength for locally authenticated user
 
     Args:
         handle (UcscHandle)
@@ -460,7 +460,7 @@ def password_strength_check(handle, descr=None, **kwargs):
 
 def password_strength_uncheck(handle):
     """
-    check or un-check pasword strength for locally authenticated user
+    check or un-check password strength for locally authenticated user
 
     Args:
         handle (UcscHandle)
@@ -485,16 +485,16 @@ def password_profile_modify(handle, change_interval=None,
                             history_count=None, expiration_warn_time=None,
                             descr=None, **kwargs):
     """
-    modfiy passpord profile of locally authenticated user
+    Modify password profile of locally authenticated user
 
     Args:
         handle (UcscHandle)
-        change_interval (number): change interval
-        no_change_interval (number): no change interval
+        change_interval (string): change interval
+        no_change_interval (string): no change interval
         change_during_interval (string): ["disable", "enable"]
-        change_count (number): change count
-        history_count (number): history count
-        expiration_warn_time(number): expiration warn time
+        change_count (string): change count
+        history_count (string): history count
+        expiration_warn_time(string): expiration warn time
         descr (string): description
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.

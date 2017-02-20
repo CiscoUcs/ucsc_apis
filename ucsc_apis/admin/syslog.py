@@ -25,7 +25,7 @@ def syslog_local_console_enable(handle, severity="emergencies", **kwargs):
     Args:
         handle (UcscHandle)
         severity (string): Level of logging.
-                           ["alerts", "critical", "emergencies"]
+                        ["emergencies","alerts", "critical"]
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
                   This should be used for future version compatibility.
@@ -36,7 +36,7 @@ def syslog_local_console_enable(handle, severity="emergencies", **kwargs):
         UcscOperationError: If CommSyslogConsole is not present
 
     Example:
-        syslog_local_console_enable(handle, severity="alert")
+        syslog_local_console_enable(handle, severity="alerts")
     """
 
     from ucscsdk.mometa.comm.CommSyslogConsole import \
@@ -173,6 +173,8 @@ def syslog_local_file_enable(handle, name=None, severity="emergencies",
         handle (UcscHandle)
         name (string): Name of Log file.
         severity (string): Level of logging.
+                        ["alerts", "critical", "debugging", "emergencies",
+                        "errors", "information", "notifications", "warnings"]
         size (string): Maximum allowed size of log file(In KBs).
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
@@ -255,7 +257,6 @@ def syslog_remote_enable(handle, name, hostname="none",
         severity (string): Level of logging.
                         ["alerts", "critical", "debugging", "emergencies",
                         "errors", "information", "notifications", "warnings"]
-
         forwarding_facility (string): Forwarding mechanism local0 to local7.
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
