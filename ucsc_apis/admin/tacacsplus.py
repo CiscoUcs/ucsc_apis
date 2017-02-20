@@ -272,7 +272,7 @@ def tacacsplus_provider_group_delete(handle, name):
     handle.commit()
 
 
-def tacacsplus_provider_group_add_provider(handle, group_name, name,
+def tacacsplus_provider_group_provider_add(handle, group_name, name,
                                            order="lowest-available",
                                            descr=None, **kwargs):
     """
@@ -294,7 +294,7 @@ def tacacsplus_provider_group_add_provider(handle, group_name, name,
         UcscOperationError: If AaaProviderGroup Or AaaProvider is not present
 
     Example:
-        tacacsplus_provider_group_add_provider(handle,
+        tacacsplus_provider_group_provider_add(handle,
                                     group_name="test_prov_grp",
                                     name="test_tacac_prov")
     """
@@ -304,13 +304,13 @@ def tacacsplus_provider_group_add_provider(handle, group_name, name,
     group_dn = ucsc_base_dn + "/tacacs-ext/providergroup-" + group_name
     group_mo = handle.query_dn(group_dn)
     if not group_mo:
-        raise UcscOperationError("tacacsplus_provider_group_add_provider",
+        raise UcscOperationError("tacacsplus_provider_group_provider_add",
                                  "TacacsPlus Provider Group does not exist.")
 
     provider_dn = ucsc_base_dn + "/tacacs-ext/provider-" + name
     mo = handle.query_dn(provider_dn)
     if not mo:
-        raise UcscOperationError("tacacsplus_provider_group_add_provider",
+        raise UcscOperationError("tacacsplus_provider_group_provider_add",
                                  "TacacsPlus Provider does not exist.")
 
     mo = AaaProviderRef(parent_mo_or_dn=group_mo,
@@ -388,7 +388,7 @@ def tacacsplus_provider_group_provider_exists(handle, group_name, name,
     return (mo_exists, mo if mo_exists else None)
 
 
-def tacacsplus_provider_group_modify_provider(handle, group_name, name,
+def tacacsplus_provider_group_provider_modify(handle, group_name, name,
                                               **kwargs):
     """
     modifies a tacacsplus provider added to a tacacsplus provider  group
@@ -408,14 +408,14 @@ def tacacsplus_provider_group_modify_provider(handle, group_name, name,
         UcscOperationError: If AaaProviderRef is not present
 
     Example:
-        tacacsplus_provider_group_modify_provider(
+        tacacsplus_provider_group_provider_modify(
           handle, group_name="test_prov_grp", name="test_tacac_prov",
           order="2")
     """
 
     mo = tacacsplus_provider_group_provider_get(handle, group_name, name)
     if not mo:
-        raise UcscOperationError("tacacsplus_provider_group_modify_provider",
+        raise UcscOperationError("tacacsplus_provider_group_provider_modify",
                                  "Provider not available under group.")
 
     mo.set_prop_multiple(**kwargs)
@@ -424,7 +424,7 @@ def tacacsplus_provider_group_modify_provider(handle, group_name, name,
     return mo
 
 
-def tacacsplus_provider_group_remove_provider(handle, group_name, name):
+def tacacsplus_provider_group_provider_remove(handle, group_name, name):
     """
     removes a tacacsplus provider from a tacacsplus provider  group
 
@@ -440,14 +440,14 @@ def tacacsplus_provider_group_remove_provider(handle, group_name, name):
         UcscOperationError: If AaaProviderRef is not present
 
     Example:
-        tacacsplus_provider_group_remove_provider(handle,
+        tacacsplus_provider_group_provider_remove(handle,
                                     group_name="test_prov_grp",
                                     name="test_tacac_prov")
     """
 
     mo = tacacsplus_provider_group_provider_get(handle, group_name, name)
     if not mo:
-        raise UcscOperationError("tacacsplus_provider_group_remove_provider",
+        raise UcscOperationError("tacacsplus_provider_group_provider_remove",
                                  "Provider not available under group.")
 
     handle.remove_mo(mo)

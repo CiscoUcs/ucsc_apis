@@ -47,14 +47,14 @@ def test_002_user_modify():
     assert_equal(mo.last_name, "test lastname")
 
 
-def test_003_user_add_role():
-    user_add_role(handle, user_name="test_user", name="storage")
+def test_003_user_role_add():
+    user_role_add(handle, user_name="test_user", name="storage")
     found = user_role_exists(handle, user_name="test_user", name="storage")[0]
     assert_equal(found, True)
 
 
-def test_004_user_remove_role():
-    user_remove_role(handle, user_name="test_user", name="storage")
+def test_004_user_role_remove():
+    user_role_remove(handle, user_name="test_user", name="storage")
     found = user_role_exists(handle, user_name="test_user", name="storage")[0]
     assert_equal(found, False)
 
@@ -65,15 +65,15 @@ def test_005_locale_create():
     assert_equal(found, True)
 
 
-def test_006_user_add_locale():
-    user_add_locale(handle, user_name="test_user", name="testlocale")
+def test_006_user_locale_add():
+    user_locale_add(handle, user_name="test_user", name="testlocale")
     found = user_locale_exists(handle, user_name="test_user",
                                name="testlocale")[0]
     assert_equal(found, True)
 
 
-def test_007_user_remove_locale():
-    user_remove_locale(handle, user_name="test_user", name="testlocale")
+def test_007_user_locale_remove():
+    user_locale_remove(handle, user_name="test_user", name="testlocale")
     found = user_locale_exists(handle, user_name="test_user",
                                name="testlocale")[0]
     assert_equal(found, False)
