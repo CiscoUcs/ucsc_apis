@@ -32,8 +32,8 @@ def test_001_timezone_set():
     assert_equal(mo.timezone, "Asia/Manila")
 
 
-def test_002_ntp_server_create():
-    ntp_server_create(handle, name="192.168.1.1")
+def test_002_ntp_server_add():
+    ntp_server_add(handle, name="192.168.1.1")
     found = ntp_server_exists(handle, name="192.168.1.1")[0]
     assert_equal(found, True)
 

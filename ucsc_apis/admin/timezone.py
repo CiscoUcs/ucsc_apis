@@ -55,7 +55,7 @@ def time_zone_set(handle, timezone, **kwargs):
     return mo
 
 
-def ntp_server_create(handle, name, descr=None, **kwargs):
+def ntp_server_add(handle, name, descr=None, **kwargs):
     """
     Adds NTP server using IP address.
 
@@ -70,7 +70,7 @@ def ntp_server_create(handle, name, descr=None, **kwargs):
         CommNtpProvider: Managed object
 
     Example:
-        ntp_server_create(handle, name="72.163.128.140", descr="Default NTP")
+        ntp_server_add(handle, name="72.163.128.140", descr="Default NTP")
     """
 
     from ucscsdk.mometa.comm.CommNtpProvider import CommNtpProvider
