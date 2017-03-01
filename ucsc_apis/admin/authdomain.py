@@ -168,6 +168,7 @@ def auth_domain_realm_configure(handle, domain_name, realm="local",
         handle (UcscHandle)
         domain_name (string): auth domain name
         realm (string): realm ["ldap", "local", "none", "radius", "tacacs"]
+                        Use "none" to disable auth
         provider_group (string): provider group name
         name (string): name
         descr (string): description
@@ -256,7 +257,8 @@ def native_auth_default(handle, realm=None, session_timeout=None,
 
     Args:
         handle (UcscHandle)
-        realm (string): realm
+        realm (string): realm ["ldap", "local", "none", "radius", "tacacs"]
+                        Use "none" to disable auth
         session_timeout (string): session_timeout
         refresh_period (string): refresh_period
         provider_group (string): provider_group
@@ -304,7 +306,8 @@ def native_auth_console(handle, realm=None, provider_group=None,
 
     Args:
         handle (UcscHandle)
-        realm (string): realm
+        realm (string): realm ["ldap", "local", "none", "radius", "tacacs"]
+                        Use "none" to disable auth
         provider_group (string): provider_group
         name (string): name
         descr (string): description

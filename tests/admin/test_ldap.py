@@ -14,6 +14,7 @@
 from ..connection.info import custom_setup, custom_teardown
 from nose.tools import *
 from ucsc_apis.admin.ldap import *
+from ucsc_apis.admin.locale import *
 
 handle = None
 
@@ -41,7 +42,7 @@ def test_002_ldap_provider_modify():
 
 
 def test_003_ldap_provider_configure_rules():
-    mo = ldap_provider_configure_group_rules(
+    mo = ldap_provider_group_rules_configure(
             handle,
             ldap_provider_name="test_ldap_prov", authorization="enable")
     assert_equal(mo.authorization, "enable")
@@ -53,8 +54,8 @@ def test_004_ldap_group_map_create():
     assert_equal(found, True)
 
 
-def test_005_ldap_group_map_add_role():
-    ldap_group_map_add_role(
+def test_005_ldap_group_map_role_add():
+    ldap_group_map_role_add(
         handle, ldap_group_map_name="test_ldap_grp_map", name="storage")
     found = ldap_group_map_role_exists(
             handle,
@@ -62,14 +63,24 @@ def test_005_ldap_group_map_add_role():
     assert_equal(found, True)
 
 
-def test_006_ldap_provider_group_create():
+def test_006_ldap_group_map_locale_add():
+    locale_create(handle, name="locale1")
+    ldap_group_map_locale_add(
+        handle, ldap_group_map_name="test_ldap_grp_map", name="locale1")
+    found = ldap_group_map_locale_exists(
+            handle,
+            ldap_group_map_name="test_ldap_grp_map", name="locale1")[0]
+    assert_equal(found, True)
+
+
+def test_007_ldap_provider_group_create():
     ldap_provider_group_create(handle, name="test_prov_grp")
     found = ldap_provider_group_exists(handle, name="test_prov_grp")[0]
     assert_equal(found, True)
 
 
-def test_007_ldap_provider_group_add_provider():
-    ldap_provider_group_add_provider(
+def test_007_ldap_provider_group_provider_add():
+    ldap_provider_group_provider_add(
         handle, group_name="test_prov_grp", name="test_ldap_prov")
     found = ldap_provider_group_provider_exists(
             handle,
@@ -77,15 +88,15 @@ def test_007_ldap_provider_group_add_provider():
     assert_equal(found, True)
 
 
-def test_008_ldap_provider_group_modify_provider():
-    mo = ldap_provider_group_modify_provider(
+def test_008_ldap_provider_group_provider_modify():
+    mo = ldap_provider_group_provider_modify(
         handle, group_name="test_prov_grp", name="test_ldap_prov",
         order="2")
     assert_equal(mo.order, "2")
 
 
-def test_009_ldap_provider_group_remove_provider():
-    ldap_provider_group_remove_provider(
+def test_009_ldap_provider_group_provider_remove():
+    ldap_provider_group_provider_remove(
         handle, group_name="test_prov_grp", name="test_ldap_prov")
     found = ldap_provider_group_provider_exists(
             handle,
@@ -99,8 +110,8 @@ def test_010_ldap_provider_group_delete():
     assert_equal(found, False)
 
 
-def test_011_ldap_group_map_remove_role():
-    ldap_group_map_remove_role(
+def test_011_ldap_group_map_role_remove():
+    ldap_group_map_role_remove(
         handle, ldap_group_map_name="test_ldap_grp_map", name="storage")
     found = ldap_group_map_role_exists(
             handle,

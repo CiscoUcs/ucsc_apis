@@ -38,14 +38,14 @@ def test_002_locale_modify():
     assert_equal(mo.descr, "testing locale")
 
 
-def test_003_locale_assign_org():
-    mo = locale_assign_org(handle, locale_name="test_locale",
-                           name="test_org_assign")
+def test_003_locale_org_assign():
+    mo = locale_org_assign(handle, locale_name="test_locale",
+                           name="test_org_assign", org_dn="org-root")
     assert_equal(mo.name, "test_org_assign")
 
 
-def test_004_locale_assign_domaingroup():
-    mo = locale_assign_domaingroup(handle, locale_name="test_locale",
+def test_004_locale_domaingroup_assign():
+    mo = locale_domaingroup_assign(handle, locale_name="test_locale",
                                    name="test_domgrp_asn")
     assert_equal(mo.name, "test_domgrp_asn")
 
