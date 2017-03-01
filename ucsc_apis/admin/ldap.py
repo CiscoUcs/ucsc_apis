@@ -15,6 +15,7 @@
 This module performs the operation related to ldap.
 """
 from ucscsdk.ucscexception import UcscOperationError
+from ..admin.locale import locale_exists
 from ..common.utils import get_device_profile_dn
 ucsc_base_dn = get_device_profile_dn(name="default")
 
@@ -186,7 +187,7 @@ def ldap_provider_delete(handle, name):
     handle.commit()
 
 
-def ldap_provider_configure_group_rules(handle, ldap_provider_name,
+def ldap_provider_group_rules_configure(handle, ldap_provider_name,
                                         authorization=None, traversal=None,
                                         target_attr=None, name=None,
                                         descr=None, **kwargs):
@@ -208,7 +209,7 @@ def ldap_provider_configure_group_rules(handle, ldap_provider_name,
         AaaLdapGroupRule : Managed Object
 
     Example:
-        ldap_provider_configure_group_rules(
+        ldap_provider_group_rules_configure(
               handle,
               ldap_provider_name="test_ldap_prov", authorization="enable")
     """
@@ -218,7 +219,7 @@ def ldap_provider_configure_group_rules(handle, ldap_provider_name,
     dn = ucsc_base_dn + "/ldap-ext/provider-" + ldap_provider_name
     obj = handle.query_dn(dn)
     if not obj:
-        raise UcscOperationError("ldap_provider_configure_group_rules",
+        raise UcscOperationError("ldap_provider_group_rules_configure",
                                  "Ldap Provider does not exist.")
 
     mo = AaaLdapGroupRule(parent_mo_or_dn=obj)
@@ -339,7 +340,7 @@ def ldap_group_map_delete(handle, name):
     handle.commit()
 
 
-def ldap_group_map_add_role(handle, ldap_group_map_name, name, descr=None,
+def ldap_group_map_role_add(handle, ldap_group_map_name, name, descr=None,
                             **kwargs):
     """
     add role to ldap group map
@@ -356,7 +357,7 @@ def ldap_group_map_add_role(handle, ldap_group_map_name, name, descr=None,
         AaaUserRole : Managed Object
 
     Example:
-        ldap_group_map_add_role(
+        ldap_group_map_role_add(
           handle, ldap_group_map_name="test_ldap_grp_map", name="storage")
     """
 
@@ -365,7 +366,7 @@ def ldap_group_map_add_role(handle, ldap_group_map_name, name, descr=None,
     dn = ucsc_base_dn + "/ldap-ext/ldapgroup-" + ldap_group_map_name
     obj = handle.query_dn(dn)
     if not obj:
-        raise UcscOperationError("ldap_group_map_add_role",
+        raise UcscOperationError("ldap_group_map_role_add",
                                  "Ldap Group map '%s' does not exist" % dn)
 
     mo = AaaUserRole(parent_mo_or_dn=obj, name=name, descr=descr)
@@ -428,7 +429,7 @@ def ldap_group_map_role_exists(handle, ldap_group_map_name, name, **kwargs):
     return (mo_exists, mo if mo_exists else None)
 
 
-def ldap_group_map_remove_role(handle, ldap_group_map_name, name):
+def ldap_group_map_role_remove(handle, ldap_group_map_name, name):
     """
     removes role from the respective ldap group map
 
@@ -444,19 +445,144 @@ def ldap_group_map_remove_role(handle, ldap_group_map_name, name):
         UcscOperationError: If AaaUserRole is not present
 
     Example:
-        ldap_group_map_remove_role(handle,
+        ldap_group_map_role_remove(handle,
                                    ldap_group_map_name="test_ldap_grp_map",
                                    name="test_role")
     """
 
     mo = ldap_group_map_role_get(handle, ldap_group_map_name, name)
     if not mo:
-        raise UcscOperationError("ldap_group_map_remove_role",
+        raise UcscOperationError("ldap_group_map_role_remove",
                                  "Ldap Group Role does not exist")
 
     handle.remove_mo(mo)
     handle.commit()
 
+
+def ldap_group_map_locale_add(handle, ldap_group_map_name, name, descr=None,
+                            **kwargs):
+    """
+    add locale to ldap group map
+
+    Args:
+        handle (UcscHandle)
+        ldap_group_map_name (string): name of ldap group
+        name (string):  locale name
+        descr (string): descr
+        **kwargs: Any additional key-value pair of managed object(MO)'s
+                  property and value, which are not part of regular args.
+                  This should be used for future version compatibility.
+    Returns:
+        AaaUserLocale : Managed Object
+
+    Example:
+        ldap_group_map_locale_add(
+          handle, ldap_group_map_name="test_ldap_grp_map", name="locale1")
+    """
+
+    from ucscsdk.mometa.aaa.AaaUserLocale import AaaUserLocale
+
+    dn = ucsc_base_dn + "/ldap-ext/ldapgroup-" + ldap_group_map_name
+    obj = handle.query_dn(dn)
+    if not obj:
+        raise UcscOperationError("ldap_group_map_locale_add",
+                                 "Ldap Group map '%s' does not exist" % dn)
+
+    if not locale_exists(handle, name=name)[0]:
+        raise UcscOperationError("ldap_group_map_locale_add",
+                                 "Locale '%s' does not exist" % name)
+
+    mo = AaaUserLocale(parent_mo_or_dn=obj, name=name, descr=descr)
+
+    mo.set_prop_multiple(**kwargs)
+
+    handle.add_mo(mo, True)
+    handle.commit()
+    return mo
+
+
+def ldap_group_map_locale_get(handle, ldap_group_map_name, name):
+    """
+    Gets the locale for the respective ldap group map
+
+    Args:
+        handle (UcscHandle)
+        ldap_group_map_name (string): name of ldap group
+        name (string):  locale name
+
+    Returns:
+        AaaUserLocale : Managed Object OR None
+
+    Example:
+        ldap_group_map_locale_get(handle,
+                                ldap_group_map_name="test_ldap_grp_map",
+                                name="locale1")
+    """
+
+    ldap_dn = ucsc_base_dn + "/ldap-ext/ldapgroup-" + ldap_group_map_name
+    dn = ldap_dn + "/locale-" + name
+    return handle.query_dn(dn)
+
+
+def ldap_group_map_locale_exists(handle, ldap_group_map_name, name, **kwargs):
+    """
+    checks if locale exists for the respective ldap group map
+
+    Args:
+        handle (UcscHandle)
+        ldap_group_map_name (string): name of ldap group
+        name (string):  locale name
+        **kwargs: key-value pair of managed object(MO) property and value, Use
+                  'print(ucsccoreutils.get_meta_info(<classid>).config_props)'
+                  to get all configurable properties of class
+
+    Returns:
+        (True/False, MO/None)
+
+    Example:
+        ldap_group_map_locale_exists(handle,
+                                   ldap_group_map_name="test_ldap_grp_map",
+                                   name="locale1")
+    """
+
+    mo = ldap_group_map_locale_get(handle, ldap_group_map_name, name)
+    if not mo:
+        return (False, None)
+    mo_exists = mo.check_prop_match(**kwargs)
+    return (mo_exists, mo if mo_exists else None)
+
+
+def ldap_group_map_locale_remove(handle, ldap_group_map_name, name):
+    """
+    removes locale from the respective ldap group map
+
+    Args:
+        handle (UcscHandle)
+        ldap_group_map_name (string): name of ldap group
+        name (string):  locale name
+
+    Returns:
+        None
+
+    Raises:
+        UcscOperationError: If AaaUserLocale is not present
+
+    Example:
+        ldap_group_map_locale_remove(handle,
+                                   ldap_group_map_name="test_ldap_grp_map",
+                                   name="locale1")
+    """
+
+    mo = ldap_group_map_locale_get(handle, ldap_group_map_name, name)
+    if not mo:
+        raise UcscOperationError("ldap_group_map_locale_remove",
+                                 "Ldap Group Locale does not exist")
+
+    if not locale_get(handle, name=name)[0]:
+        raise UcscOperationError("ldap_group_map_locale_remove",
+                                 "Locale '%s' does not exist" % name)
+    handle.remove_mo(mo)
+    handle.commit()
 
 def ldap_provider_group_create(handle, name, descr=None, **kwargs):
     """
@@ -561,7 +687,7 @@ def ldap_provider_group_delete(handle, name):
     handle.commit()
 
 
-def ldap_provider_group_add_provider(handle, group_name, name,
+def ldap_provider_group_provider_add(handle, group_name, name,
                                      order="lowest-available",
                                      descr=None, **kwargs):
     """
@@ -583,7 +709,7 @@ def ldap_provider_group_add_provider(handle, group_name, name,
         UcscOperationError: If AaaProviderGroup or AaaProvider is not present
 
     Example:
-        ldap_provider_group_add_provider(handle,
+        ldap_provider_group_provider_add(handle,
                                         group_name="test_ldap_provider_group",
                                         name="test_provider",
                                         order="1")
@@ -594,13 +720,13 @@ def ldap_provider_group_add_provider(handle, group_name, name,
     group_dn = ucsc_base_dn + "/ldap-ext/providergroup-" + group_name
     group_mo = handle.query_dn(group_dn)
     if not group_mo:
-        raise UcscOperationError("ldap_provider_group_add_provider",
+        raise UcscOperationError("ldap_provider_group_provider_add",
                                  "Ldap Provider Group does not exist.")
 
     provider_dn = ucsc_base_dn + "/ldap-ext/provider-" + name
     provider_mo = handle.query_dn(provider_dn)
     if not provider_mo:
-        raise UcscOperationError("ldap_provider_group_add_provider",
+        raise UcscOperationError("ldap_provider_group_provider_add",
                                  "Ldap Provider does not exist.")
 
     mo = AaaProviderRef(parent_mo_or_dn=group_mo,
@@ -668,7 +794,7 @@ def ldap_provider_group_provider_exists(handle, group_name, name, **kwargs):
     return (mo_exists, mo if mo_exists else None)
 
 
-def ldap_provider_group_modify_provider(handle, group_name, name, **kwargs):
+def ldap_provider_group_provider_modify(handle, group_name, name, **kwargs):
     """
     modify provider of ldap provider group
 
@@ -687,7 +813,7 @@ def ldap_provider_group_modify_provider(handle, group_name, name, **kwargs):
         AaaProviderRef : Managed Object
 
     Example:
-        ldap_provider_group_modify_provider(handle,
+        ldap_provider_group_provider_modify(handle,
                                             group_name="test_ldap_provider_group",
                                             name="test_provider",
                                             order="1")
@@ -695,7 +821,7 @@ def ldap_provider_group_modify_provider(handle, group_name, name, **kwargs):
 
     mo = ldap_provider_group_provider_get(handle, group_name, name)
     if not mo:
-        raise UcscOperationError("ldap_provider_group_modify_provider",
+        raise UcscOperationError("ldap_provider_group_provider_modify",
                                  "Provider not available under group.")
 
     mo.set_prop_multiple(**kwargs)
@@ -704,7 +830,7 @@ def ldap_provider_group_modify_provider(handle, group_name, name, **kwargs):
     return mo
 
 
-def ldap_provider_group_remove_provider(handle, group_name, name):
+def ldap_provider_group_provider_remove(handle, group_name, name):
     """
     removes provider from ldap provider group
 
@@ -720,14 +846,14 @@ def ldap_provider_group_remove_provider(handle, group_name, name):
         UcscOperationError: If AaaProviderRef is not present
 
     Example:
-        ldap_provider_group_remove_provider(handle,
+        ldap_provider_group_provider_remove(handle,
                                             group_name="test_ldap_provider_group",
                                             name="test_provider")
     """
 
     mo = ldap_provider_group_provider_get(handle, group_name, name)
     if not mo:
-        raise UcscOperationError("ldap_provider_group_remove_provider",
+        raise UcscOperationError("ldap_provider_group_provider_remove",
                                  "Provider not available under group.")
 
     handle.remove_mo(mo)

@@ -153,7 +153,7 @@ def locale_delete(handle, name):
     handle.commit()
 
 
-def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=None,
+def locale_org_assign(handle, locale_name, name, org_dn="org-root", descr=None,
                       **kwargs):
     """
     assigns a locale to org
@@ -162,7 +162,7 @@ def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=None,
         handle (UcscHandle)
         locale_name(string): locale name
         name (string): name for the assignment
-        org_dn (string): org_dn
+        org_dn (string): Dn string of the org
         descr (string): descr
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
@@ -174,7 +174,7 @@ def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=None,
         UcscOperationError: If AaaLocale is not present
 
     Example:
-        locale_assign_org(handle, locale_name="test_locale",
+        locale_org_assign(handle, locale_name="test_locale",
                           name="test_org_assign")
     """
 
@@ -182,9 +182,12 @@ def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=None,
 
     obj = locale_get(handle, locale_name)
     if not obj:
-        raise UcscOperationError("locale_assign_org",
+        raise UcscOperationError("locale_org_assign",
                                  "Locale does not exist")
 
+    if not handle.query_dn(org_dn):
+        raise UcscOperationError("locale_org_assign",
+                                 "org_dn does not exist")
     mo = AaaOrg(parent_mo_or_dn=obj, name=name, org_dn=org_dn, descr=descr)
 
     mo.set_prop_multiple(**kwargs)
@@ -194,7 +197,7 @@ def locale_assign_org(handle, locale_name, name, org_dn="org-root", descr=None,
     return mo
 
 
-def locale_unassign_org(handle, locale_name, name):
+def locale_org_unassign(handle, locale_name, name):
     """
     unassigns a locale from org
 
@@ -210,7 +213,7 @@ def locale_unassign_org(handle, locale_name, name):
         UcscOperationError: If AaaOrg is not present
 
     Example:
-        locale_unassign_org(handle, locale_name="test_locale,
+        locale_org_unassign(handle, locale_name="test_locale,
                             name="org_name")
     """
 
@@ -218,14 +221,14 @@ def locale_unassign_org(handle, locale_name, name):
     dn = locale_dn + "/org-" + name
     mo = handle.query_dn(dn)
     if not mo:
-        raise UcscOperationError("locale_unassign_org",
+        raise UcscOperationError("locale_org_unassign",
                                  "No Org assigned to Locale")
 
     handle.remove_mo(mo)
     handle.commit()
 
 
-def locale_assign_domaingroup(handle, locale_name, name,
+def locale_domaingroup_assign(handle, locale_name, name,
                               domaingroup_dn="domaingroup-root", descr=None,
                               **kwargs):
     """
@@ -235,7 +238,7 @@ def locale_assign_domaingroup(handle, locale_name, name,
         handle (UcscHandle)
         locale_name(string): locale name
         name (string): name for the assignment
-        domaingroup_dn (string): domaingroup_dn
+        domaingroup_dn (string): Dn string of the domaingroup
         descr (string): descr
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
@@ -247,7 +250,7 @@ def locale_assign_domaingroup(handle, locale_name, name,
         UcscOperationError: If AaaLocale is not present
 
     Example:
-        locale_assign_domaingroup(handle, locale_name="test_locale",
+        locale_domaingroup_assign(handle, locale_name="test_locale",
                                   name="test_domgrp_asn")
     """
 
@@ -255,9 +258,12 @@ def locale_assign_domaingroup(handle, locale_name, name,
 
     obj = locale_get(handle, locale_name)
     if not obj:
-        raise UcscOperationError("locale_assign_domaingroup",
+        raise UcscOperationError("locale_domaingroup_assign",
                                  "Locale does not exist")
 
+    if not handle.query_dn(domaingroup_dn):
+        raise UcscOperationError("locale_org_assign",
+                                 "domaingroup_dn does not exist")
     mo = AaaDomainGroup(parent_mo_or_dn=obj, name=name,
                         domaingroup_dn=domaingroup_dn, descr=descr)
 
@@ -268,7 +274,7 @@ def locale_assign_domaingroup(handle, locale_name, name,
     return mo
 
 
-def locale_unassign_domaingroup(handle, locale_name, name):
+def locale_domaingroup_unassign(handle, locale_name, name):
     """
     unassigns a locale
 
@@ -285,7 +291,7 @@ def locale_unassign_domaingroup(handle, locale_name, name):
         UcscOperationError: If AaaOrg is not present
 
     Example:
-        locale_unassign_domaingroup(handle, locale_name="test_locale,
+        locale_domaingroup_unassign(handle, locale_name="test_locale,
                                     name="test_domgrp_asn")
     """
 
@@ -293,7 +299,7 @@ def locale_unassign_domaingroup(handle, locale_name, name):
     dn = locale_dn + "/domaingroup-" + name
     mo = handle.query_dn(dn)
     if not mo:
-        raise UcscOperationError("locale_unassign_domaingroup",
+        raise UcscOperationError("locale_domaingroup_unassign",
                                  "No domaingroup assigned to Locale")
 
     handle.remove_mo(mo)
