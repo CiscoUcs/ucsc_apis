@@ -51,8 +51,10 @@ def test_004_callhome_config():
 
 
 def test_005_callhome_proxy_config():
-    mo = call_home_proxy_config(handle, url="sch.proxycisco.com", port="80")
-    assert_equal(mo.url, "sch.proxycisco.com")
+    mo = call_home_proxy_config(handle, url="http://sch.proxycisco.com", port="80")
+    assert_equal(mo.url, "http://sch.proxycisco.com")
+    mo = call_home_proxy_config(handle, url="", port="80")
+    assert_equal(mo, None)
 
 
 def test_006_callhome_disable():

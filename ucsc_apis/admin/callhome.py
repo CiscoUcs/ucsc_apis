@@ -168,12 +168,14 @@ def call_home_proxy_config(handle, url, port="80", **kwargs):
     Args:
         handle (UcscHandle)
         url (String) : URL for the call home proxy
+                        To clear proxy config, set this as empty string ("")
         port (String) : port number for the call home proxy
+                        To clear proxy config, set this as empty string  ("")
         **kwargs: Any additional key-value pair of managed object(MO)'s
                   property and value, which are not part of regular args.
                   This should be used for future version compatibility.
     Returns:
-        SmartcallhomeHttpProxy : ManagedObject
+        SmartcallhomeHttpProxy : ManagedObject or None
 
     Raises:
         UcscOperationError: If SmartcallhomeHttpProxy is not present
@@ -182,15 +184,19 @@ def call_home_proxy_config(handle, url, port="80", **kwargs):
         call_home_proxy_config(handle, url="www.testproxy.com", port=80)
     """
 
-    mo = handle.query_dn(ucsc_base_dn + "/call-home/proxy")
-    if not mo:
-        raise UcscOperationError("call_home_proxy_config",
-                                 "call home proxy is not available.")
-
-    mo.url = url
-    mo.port = port
+    from ucscsdk.mometa.smartcallhome.SmartcallhomeHttpProxy import \
+            SmartcallhomeHttpProxy
+    mo = SmartcallhomeHttpProxy(parent_mo_or_dn=ucsc_base_dn + "/call-home",
+                                url=url,
+                                port=port)
 
     mo.set_prop_multiple(**kwargs)
+
+    if url == "" or port == "":
+        mo.port = None
+        handle.remove_mo(mo)
+        handle.commit()
+        return
 
     handle.add_mo(mo, modify_present=True)
     handle.commit()
