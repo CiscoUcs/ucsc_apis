@@ -428,7 +428,7 @@ def trusted_point_modify(handle, name, **kwargs):
 
 def trusted_point_delete(handle, name):
     """
-    Deletes a truted point
+    Deletes a trusted point
 
     Args:
         handle (ucschandle)
