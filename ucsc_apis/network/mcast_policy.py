@@ -12,7 +12,7 @@
 # limitations under the License.
 
 """
-This module performs the create the mulitcast policer under the specified org
+This module performs the create the multicast policer under the specified org
 """
 from ucscsdk.ucscexception import UcscOperationError
 

@@ -12,7 +12,7 @@
 # limitations under the License.
 
 """
-This module performs the operation related to TFTP core Expoerter.
+This module performs the operation related to TFTP core Exporter.
 """
 from ..common.utils import get_device_profile_dn
 ucsc_base_dn = get_device_profile_dn(name="default")
